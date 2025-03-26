@@ -63,6 +63,10 @@ dependencies {
 
     implementation("androidx.compose.runtime:runtime-livedata:1.5.4") // Cho observeAsState()
 
+    implementation ("androidx.constraintlayout:constraintlayout-compose:1.0.1")
+
+    implementation("io.coil-kt:coil-compose:2.4.0")
+
     // Room Database
     implementation("androidx.room:room-runtime:2.6.1")
     kapt("androidx.room:room-compiler:2.6.1")
@@ -83,4 +87,10 @@ dependencies {
     // Lifecycle (ViewModel, LiveData, StateFlow)
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
+
+    // Unit test
+    testImplementation("junit:junit:4.13.2") // JUnit
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3") // Coroutine Test
+    testImplementation("io.mockk:mockk:1.13.7") // MockK để mock Repository
+    testImplementation("androidx.arch.core:core-testing:2.2.0") // LiveData test
 }

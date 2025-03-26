@@ -61,6 +61,8 @@ dependencies {
 
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.9.0")
 
+    implementation("androidx.compose.runtime:runtime-livedata:1.5.4") // Cho observeAsState()
+
     // Room Database
     implementation("androidx.room:room-runtime:2.6.1")
     kapt("androidx.room:room-compiler:2.6.1")
@@ -73,6 +75,7 @@ dependencies {
     // Hilt (Dependency Injection)
     implementation("com.google.dagger:hilt-android:2.51")
     kapt("com.google.dagger:hilt-compiler:2.51")
+    implementation("androidx.hilt:hilt-navigation-compose:1.1.0")
 
     // Navigation Compose
     implementation("androidx.navigation:navigation-compose:2.7.7")

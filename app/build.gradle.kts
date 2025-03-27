@@ -67,6 +67,8 @@ dependencies {
 
     implementation("io.coil-kt:coil-compose:2.4.0")
 
+    implementation ("androidx.compose.material:material-icons-extended:1.5.4")
+
 //    implementation("com.bef.effectsdkk:effectsdkk:1.0.0")
 
     // Room Database

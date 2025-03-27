@@ -9,11 +9,13 @@ import com.example.eazyshop.data.model.Product
 fun ProductCardHome(
     modifier: Modifier = Modifier,
     product: Product,
-    onAddToCart: () -> Unit
+    onAddToCart: () -> Unit,
+    onBuy: () -> Unit
 ) {
     BaseProductCard(
         product = product,
         buttonText = "",
-        onButtonClick = onAddToCart
+        onActive = onAddToCart,
+        onBuy = onBuy
     )
 }

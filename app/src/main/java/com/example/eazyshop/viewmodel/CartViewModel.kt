@@ -1,11 +1,13 @@
 package com.example.eazyshop.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.eazyshop.data.model.CartItem
 import com.example.eazyshop.data.model.Product
 import com.example.eazyshop.data.repository.CartRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -17,7 +19,14 @@ class CartViewModel @Inject constructor(
 ) : ViewModel() {
     fun addToCart(product: Product) {
         viewModelScope.launch {
-            val cartItem = CartItem(productId = product.id, quantity = 1)
+            val cartItem = CartItem(
+                productId = product.id,
+                title = product.title,
+                price = product.price,
+                image = product.image,
+                category = product.category,
+                quantity = 1
+            )
             cartRepository.addToCart(cartItem)
         }
     }

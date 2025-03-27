@@ -43,7 +43,8 @@ fun BaseProductCard(
     modifier: Modifier = Modifier,
     product: Product,
     buttonText: String,
-    onButtonClick: () -> Unit,
+    onActive: () -> Unit,
+    onBuy: () -> Unit,
     extraContent: @Composable () -> Unit = {}
 ) {
     Card(
@@ -126,7 +127,7 @@ fun BaseProductCard(
                     }
             ) {
                 Button(
-                    onClick = {onButtonClick()},
+                    onClick = {onBuy()},
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFFC107)),
                     shape = RoundedCornerShape(12.dp),
                     modifier = Modifier
@@ -147,22 +148,14 @@ fun BaseProductCard(
                     modifier = Modifier.weight(0.3f)
                 ) {
                     IconButton(
-                        onClick = {},
+                        onClick = {onActive()},
                     ) {
                         Icon(
-                            Icons.Outlined.ShoppingCart,
+                            painter = painterResource(id = R.drawable.cart_plus_svgrepo_com),
                             contentDescription = "",
                             modifier = Modifier.size(32.dp)
                         )
                     }
-
-                    Icon(
-                        imageVector = Icons.Default.Add,
-                        contentDescription = "Add",
-                        modifier = Modifier
-                            .size(10.dp)
-                            .offset(x = (16).dp, y = (14).dp)
-                    )
                 }
             }
         }
@@ -183,7 +176,8 @@ private fun BaseProductCardPreview() {
                 category = "Electronics"
             ),
             buttonText = "Mua ngay",
-            onButtonClick = { /* TODO: Handle button click */ },
+            onActive = { /* TODO: Handle button click */ },
+            onBuy = {},
             extraContent = {
                 Text(
                     text = "🔥 Giảm giá 10%",

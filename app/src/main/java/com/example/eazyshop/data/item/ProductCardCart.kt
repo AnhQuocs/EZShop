@@ -20,6 +20,7 @@ fun ProductCardCart(
     modifier: Modifier = Modifier,
     product: Product,
     cartItem: CartItem,
+    onBuy: () -> Unit,
     onRemoveFromCart: () -> Unit,
     onIncreaseQuantity: () -> Unit,
     onDecreaseQuantity: () -> Unit
@@ -27,7 +28,8 @@ fun ProductCardCart(
     BaseProductCard(
         product = product,
         buttonText = "Xóa",
-        onButtonClick = onRemoveFromCart,
+        onActive = onRemoveFromCart,
+        onBuy = {},
         extraContent = {
             Row(
                 verticalAlignment = Alignment.CenterVertically,

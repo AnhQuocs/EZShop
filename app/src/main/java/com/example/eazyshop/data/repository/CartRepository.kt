@@ -1,5 +1,6 @@
 package com.example.eazyshop.data.repository
 
+import android.util.Log
 import com.example.eazyshop.data.local.CartDao
 import com.example.eazyshop.data.model.CartItem
 import kotlinx.coroutines.flow.Flow

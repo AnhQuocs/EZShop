@@ -1,6 +1,7 @@
 package com.example.eazyshop.viewmodel
 
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
@@ -18,7 +19,16 @@ class ProductViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            productRepository.fetchProducts() // Gọi API để fetch dữ liệu khi ViewModel được tạo
+            val count = productRepository.getProductCount()
+            Log.d("ProductViewModel", "Số sản phẩm trong database trước khi fetch: $count")
+
+            if (count == 0) {
+                Log.d("ProductViewModel", "Database trống -> Gọi API để fetch sản phẩm")
+                productRepository.fetchProducts()
+            } else {
+                Log.d("ProductViewModel", "Database đã có dữ liệu -> Không gọi API")
+            }
         }
     }
+
 }

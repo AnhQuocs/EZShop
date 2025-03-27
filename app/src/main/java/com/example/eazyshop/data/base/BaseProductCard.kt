@@ -1,10 +1,8 @@
 package com.example.eazyshop.data.base
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -12,11 +10,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.outlined.ShoppingCart
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -31,13 +27,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
-import coil.compose.rememberAsyncImagePainter
+import com.example.eazyshop.R
 import com.example.eazyshop.data.model.Product
 import com.example.eazyshop.ui.theme.EazyShopTheme
 
@@ -46,28 +43,34 @@ fun BaseProductCard(
     modifier: Modifier = Modifier,
     product: Product,
     buttonText: String,
-    inButtonClick: () -> Unit,
+    onButtonClick: () -> Unit,
     extraContent: @Composable () -> Unit = {}
 ) {
     Card(
         shape = RoundedCornerShape(16.dp),
         modifier = Modifier
             .width(200.dp)
-            .padding(6.dp),
+            .padding(6.dp)
+            .height(330.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         ConstraintLayout(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(8.dp)
+                .height(350.dp)
         ) {
             val (title, price, image, description, active) = createRefs()
 
             Text(
                 text = product.title,
                 fontWeight = FontWeight.Bold,
-                fontSize = 18.sp,
-                modifier = Modifier.constrainAs(title) {
+                textAlign = TextAlign.Center,
+                fontSize = 16.sp,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentWidth(Alignment.CenterHorizontally)
+                    .constrainAs(title) {
                     top.linkTo(parent.top)
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
@@ -75,12 +78,12 @@ fun BaseProductCard(
             )
 
             Image(
-                painter = rememberAsyncImagePainter(model = product.image),
+                painter = painterResource(id = product.image),
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .size(100.dp)
-                    .clip(CircleShape)
+                    .size(120.dp)
+                    .clip(RoundedCornerShape(8.dp))
                     .constrainAs(image) {
                         top.linkTo(title.bottom, margin = 12.dp)
                         start.linkTo(parent.start)
@@ -96,7 +99,7 @@ fun BaseProductCard(
                     .fillMaxWidth()
                     .wrapContentWidth(Alignment.CenterHorizontally)
                     .constrainAs(description) {
-                    top.linkTo(image.bottom)
+                    top.linkTo(image.bottom, margin = 4.dp)
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
                 }
@@ -107,22 +110,23 @@ fun BaseProductCard(
                 fontWeight = FontWeight.Bold,
                 fontSize = 16.sp,
                 modifier = Modifier.constrainAs(price) {
-                    top.linkTo(description.bottom, margin = 12.dp)
+//                    top.linkTo(description.bottom, margin = 12.dp)
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
+                    bottom.linkTo(active.top)
                 }
             )
 
             Row(
-                modifier = Modifier.constrainAs(active) {
-                    top.linkTo(price.bottom, margin = 12.dp)
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                    bottom.linkTo(parent.bottom)
-                }
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp)
+                    .constrainAs(active) {
+                        bottom.linkTo(parent.bottom)
+                    }
             ) {
                 Button(
-                    onClick = {},
+                    onClick = {onButtonClick()},
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFFC107)),
                     shape = RoundedCornerShape(12.dp),
                     modifier = Modifier
@@ -157,8 +161,7 @@ fun BaseProductCard(
                         contentDescription = "Add",
                         modifier = Modifier
                             .size(10.dp)
-                            .offset(x = (-22).dp, y = (14).dp)
-                            .align(Alignment.TopEnd), // Căn dấu "+" vào góc trên phải
+                            .offset(x = (16).dp, y = (14).dp)
                     )
                 }
             }
@@ -175,12 +178,12 @@ private fun BaseProductCardPreview() {
                 id = 1,
                 title = "Laptop Gaming",
                 price = 1299.99,
-                image = "https://example.com/laptop.jpg",
+                image = R.drawable.laptop_gm,
                 description = "Laptop gaming cấu hình cao",
                 category = "Electronics"
             ),
             buttonText = "Mua ngay",
-            inButtonClick = { /* TODO: Handle button click */ },
+            onButtonClick = { /* TODO: Handle button click */ },
             extraContent = {
                 Text(
                     text = "🔥 Giảm giá 10%",

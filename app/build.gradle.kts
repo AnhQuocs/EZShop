@@ -67,6 +67,8 @@ dependencies {
 
     implementation("io.coil-kt:coil-compose:2.4.0")
 
+//    implementation("com.bef.effectsdkk:effectsdkk:1.0.0")
+
     // Room Database
     implementation("androidx.room:room-runtime:2.6.1")
     kapt("androidx.room:room-compiler:2.6.1")

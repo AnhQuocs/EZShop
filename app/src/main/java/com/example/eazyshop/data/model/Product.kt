@@ -11,5 +11,6 @@ data class Product(
     val price: Double,
     @DrawableRes val image: Int,  // Dùng Int thay vì String
     val description: String,
-    val category: String
+    val category: String,
+    val quantity: Int
 )

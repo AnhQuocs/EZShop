@@ -44,7 +44,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.eazyshop.R
-import com.example.eazyshop.data.item.ProductCardHome
+import com.example.eazyshop.item.ProductCardHome
 import com.example.eazyshop.ui.theme.EazyShopTheme
 import com.example.eazyshop.viewmodel.CartViewModel
 import com.example.eazyshop.viewmodel.ProductViewModel
@@ -110,7 +110,7 @@ fun HomeScreen(
                     ProductCardHome(
                         product = product,
                         onAddToCart = { cartViewModel.addToCart(product) },
-                        onBuy = {navController.navigate("order/${product.id}")}
+                        onBuy = {navController.navigate("productDetail/${product.id}")}
                     )
                 }
             }

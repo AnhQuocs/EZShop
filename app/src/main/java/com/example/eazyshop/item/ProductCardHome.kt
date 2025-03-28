@@ -1,8 +1,8 @@
-package com.example.eazyshop.data.item
+package com.example.eazyshop.item
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.example.eazyshop.data.base.BaseProductCard
+import com.example.eazyshop.base.BaseProductCard
 import com.example.eazyshop.data.model.Product
 
 @Composable

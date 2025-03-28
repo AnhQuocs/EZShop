@@ -1,4 +1,4 @@
-package com.example.eazyshop.data.item
+package com.example.eazyshop.item
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -11,7 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.eazyshop.data.base.BaseProductCard
+import com.example.eazyshop.base.BaseProductCard
 import com.example.eazyshop.data.model.CartItem
 import com.example.eazyshop.data.model.Product
 

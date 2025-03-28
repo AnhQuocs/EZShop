@@ -1,4 +1,4 @@
-package com.example.eazyshop.data.base
+package com.example.eazyshop.base
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
@@ -173,7 +173,8 @@ private fun BaseProductCardPreview() {
                 price = 1299.99,
                 image = R.drawable.laptop_gm,
                 description = "Laptop gaming cấu hình cao",
-                category = "Electronics"
+                category = "Electronics",
+                quantity = 1
             ),
             buttonText = "Mua ngay",
             onActive = { /* TODO: Handle button click */ },

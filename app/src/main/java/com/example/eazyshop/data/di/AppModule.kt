@@ -1,11 +1,15 @@
 package com.example.eazyshop.data.di
 
 import android.content.Context
+import com.example.eazyshop.data.local.AddressDao
 import com.example.eazyshop.data.local.AppDatabase
 import com.example.eazyshop.data.local.CartDao
+import com.example.eazyshop.data.local.OrderHistoryDao
 import com.example.eazyshop.data.local.ProductDao
 import com.example.eazyshop.data.remote.ProductApi
+import com.example.eazyshop.data.repository.AddressRepository
 import com.example.eazyshop.data.repository.CartRepository
+import com.example.eazyshop.data.repository.OrderHistoryRepository
 import com.example.eazyshop.data.repository.ProductRepository
 import dagger.Module
 import dagger.Provides
@@ -47,6 +51,12 @@ object AppModule {
     fun provideCartDao(database: AppDatabase): CartDao = database.cartDao()
 
     @Provides
+    fun provideAddressDao(database: AppDatabase): AddressDao = database.addressDao()
+
+    @Provides
+    fun provideOrderHistoryDao(database: AppDatabase): OrderHistoryDao = database.orderHistoryDao()
+
+    @Provides
     @Singleton
     fun provideProductRepository(productDao: ProductDao, productApi: ProductApi): ProductRepository =
         ProductRepository(productDao, productApi)
@@ -55,4 +65,15 @@ object AppModule {
     @Singleton
     fun provideCartRepository(cartDao: CartDao): CartRepository =
         CartRepository(cartDao)
+
+    @Provides
+    @Singleton
+    fun provideAddressRepository(addressDao: AddressDao): AddressRepository =
+        AddressRepository(addressDao)
+
+    @Provides
+    @Singleton
+    fun provideOrderHistoryRepository(orderHistoryDao: OrderHistoryDao): OrderHistoryRepository {
+        return OrderHistoryRepository(orderHistoryDao)
+    }
 }

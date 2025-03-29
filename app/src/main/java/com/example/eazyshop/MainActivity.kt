@@ -30,6 +30,7 @@ import com.example.eazyshop.check.CheckOrderScreen
 import com.example.eazyshop.data.model.Address
 import com.example.eazyshop.data.model.OrderHistory
 import com.example.eazyshop.home.HomeScreen
+import com.example.eazyshop.home.MainScreen
 import com.example.eazyshop.order.OrderScreen
 import com.example.eazyshop.order.ProductDetailScreen
 import com.example.eazyshop.ui.theme.EazyShopTheme
@@ -68,13 +69,14 @@ fun Greeting(
 ) {
     val navController  = rememberNavController()
     val products by viewModel.products.observeAsState(initial = emptyList())
+    val cartItems by cartViewModel.cartItems.observeAsState(initial = emptyList())
 
     NavHost(
         navController = navController,
         startDestination = "home"
     ) {
         composable("home") {
-            HomeScreen(navController)
+            MainScreen(navController, cartViewModel = cartViewModel, cartItems = cartItems)
         }
 
         composable(
@@ -159,7 +161,7 @@ fun Greeting(
                             )
                             orderHistoryViewModel.insertOrder(orderHistory)
 
-                            navController.navigate("check")
+                            navController.navigate("check/${product.id}")
                         }
                     },
                     isOrderEnabled = isValid  // Truyền trạng thái vào để vô hiệu hóa nút Order
@@ -169,8 +171,18 @@ fun Greeting(
             }
         }
 
-        composable("check") {
-            CheckOrderScreen()
+        composable("check/{productId}")
+        { backStackEntry ->
+            val productId = backStackEntry.arguments?.getString("productId") ?: ""
+            val product = products.find { it.id == productId.toIntOrNull() } // Tìm sản phẩm trong danh sách
+            if (product != null) {
+                CheckOrderScreen (
+                    product = product,
+                    navController = navController,
+                ) // Gọi OrderScreen với sản phẩm tìm được
+            } else {
+                Text("Product not found") // Hiển thị thông báo nếu không tìm thấy sản phẩm
+            }
         }
     }
 }

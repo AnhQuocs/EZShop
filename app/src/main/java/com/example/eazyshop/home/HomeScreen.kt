@@ -1,6 +1,6 @@
 package com.example.eazyshop.home
 
-import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,6 +13,8 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.Home
@@ -25,12 +27,17 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -38,16 +45,19 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.eazyshop.R
+import com.example.eazyshop.data.model.CartItem
 import com.example.eazyshop.item.ProductCardHome
-import com.example.eazyshop.ui.theme.EazyShopTheme
+import com.example.eazyshop.order.CartScreen
+import com.example.eazyshop.order.HistoryScreen
+import com.example.eazyshop.order.MeScreen
 import com.example.eazyshop.viewmodel.CartViewModel
 import com.example.eazyshop.viewmodel.ProductViewModel
+import kotlinx.coroutines.launch
 
 @Composable
 fun HomeScreen(
@@ -56,8 +66,6 @@ fun HomeScreen(
     viewModel: ProductViewModel = hiltViewModel(),
     cartViewModel: CartViewModel = hiltViewModel()
 ) {
-    var isShowTabContent by remember { mutableStateOf(true) }
-
     var selectedCategory by remember { mutableStateOf("All") }
     val products by viewModel.products.observeAsState(initial = emptyList())
 
@@ -68,16 +76,26 @@ fun HomeScreen(
         products.filter { it.category == selectedCategory }
     }
 
-    Scaffold(
-        bottomBar = {
-            AnimatedVisibility(visible = isShowTabContent) {
-                EzShopBottomAppBar(
-                    onOpenHome = {},
-                    onCart = {},
-                    onHistory = {}
-                )
+    // Snackbar host state để quản lý thông báo
+    val snackbarHostState = remember { SnackbarHostState() }
+    val coroutineScope = rememberCoroutineScope()
+
+    // Lắng nghe sự kiện từ cartViewModel để hiển thị thông báo
+    LaunchedEffect(cartViewModel.cartEvent) {
+        cartViewModel.cartEvent.collect { message ->
+            if (snackbarHostState.currentSnackbarData == null) { // Kiểm tra nếu chưa có Snackbar nào hiển thị
+                coroutineScope.launch {
+                    snackbarHostState.showSnackbar(
+                        message = message,
+                        duration = SnackbarDuration.Short // Hiển thị trong thời gian ngắn
+                    )
+                }
             }
         }
+    }
+
+    Scaffold(
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) } // Thêm Snackbar
     ) { paddingValues ->
         Column(modifier = Modifier.padding(paddingValues)) {
             val wavyFont = FontFamily(Font(R.font.wavy_font))
@@ -89,7 +107,6 @@ fun HomeScreen(
                 modifier = Modifier.fillMaxWidth(),
                 color = Color(0xFFFF6600)
             )
-
 
             FilterCategory(
                 selectedCategory = selectedCategory,
@@ -106,7 +123,7 @@ fun HomeScreen(
                     .padding(top = 24.dp, start = 8.dp, end = 8.dp),
                 contentPadding = PaddingValues(8.dp)
             ) {
-                items(filteredProducts) { product ->
+                items(filteredProducts, key = {it.id}) { product ->
                     ProductCardHome(
                         navController = navController,
                         product = product,
@@ -119,77 +136,79 @@ fun HomeScreen(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun MainScreen(navController: NavController, cartViewModel: CartViewModel = hiltViewModel(), cartItems: List<CartItem>) {
+    val pagerState = rememberPagerState(pageCount = { 4 }) // ✅ Thêm pageCount
+    val coroutineScope = rememberCoroutineScope()
+
+    Scaffold(
+        bottomBar = {
+            EzShopBottomAppBar(
+                selectedIndex = pagerState.currentPage,
+                onItemSelected = { index ->
+                    coroutineScope.launch {
+                        pagerState.animateScrollToPage(index) // Vuốt mượt hơn
+                    }
+                }
+            )
+        }
+    ) { paddingValues ->
+        HorizontalPager(
+            state = pagerState, // ✅ Đảm bảo số trang được đặt rõ ràng
+            modifier = Modifier.padding(paddingValues),
+            beyondBoundsPageCount = 1
+        ) { page ->
+            when (page) {
+                0 -> HomeScreen(navController)
+                1 -> CartScreen(
+                    navController = navController,
+                    onDeleteFromCart = { cartItem -> cartViewModel.removeFromCart(cartItem) }
+                )
+                2 -> HistoryScreen()
+                3 -> MeScreen()
+            }
+        }
+    }
+}
+
 @Composable
 fun EzShopBottomAppBar(
-    modifier: Modifier = Modifier,
-    onOpenHome: () -> Unit,
-    onCart: () -> Unit,
-    onHistory: () -> Unit
+    selectedIndex: Int,
+    onItemSelected: (Int) -> Unit
 ) {
-    val iconSelected = NavigationBarItemDefaults.colors(
-        indicatorColor = Color.Transparent
+    val items = listOf(
+        "Home" to Icons.Default.Home,
+        "Cart" to Icons.Outlined.ShoppingCart,
+        "History" to Icons.Filled.AccessTime,
+        "Me" to Icons.Default.Person
     )
 
-    NavigationBar(
-        containerColor = Color.Black,
-        modifier = Modifier.height(56.dp)
-    ) {
-        NavigationBarItem(
-            selected = true,
-            onClick = { onOpenHome() },
-            icon = {
-                Icon(
-                    Icons.Default.Home,
-                    contentDescription = "home",
-                    modifier = Modifier.size(24.dp),
-                    tint = Color.White
-                )
-            },
-            label = { Text("Home", style = TextStyle(color = Color.White, fontSize = 14.sp))},
-            colors = iconSelected
-        )
-
-         NavigationBarItem(
-            selected = false,
-            onClick = { onOpenHome() },
-            icon = {
-                Icon(
-                    Icons.Outlined.ShoppingCart,
-                    contentDescription = "cart",
-                    modifier = Modifier.size(24.dp)
-                )
-            },
-            label = { Text("Cart", style = TextStyle(color = Color.White, fontSize = 14.sp))},
-            colors = iconSelected
-        )
-
-         NavigationBarItem(
-            selected = false,
-            onClick = { onOpenHome() },
-            icon = {
-                Icon(
-                    Icons.Filled.AccessTime,
-                    contentDescription = "history",
-                    modifier = Modifier.size(24.dp)
-                )
-            },
-            label = { Text("History", style = TextStyle(color = Color.White, fontSize = 14.sp))},
-            colors = iconSelected
-        )
-
-        NavigationBarItem(
-            selected = false,
-            onClick = { onOpenHome() },
-            icon = {
-                Icon(
-                    Icons.Default.Person,
-                    contentDescription = "me",
-                    modifier = Modifier.size(24.dp)
-                )
-            },
-            label = { Text("Me", style = TextStyle(color = Color.White, fontSize = 14.sp))},
-            colors = iconSelected
-        )
+    NavigationBar(containerColor = Color.Black, modifier = Modifier.height(56.dp)) {
+        items.forEachIndexed { index, item ->
+            NavigationBarItem(
+                selected = selectedIndex == index, // Sử dụng selectedIndex trực tiếp
+                onClick = { onItemSelected(index) },
+                icon = {
+                    Icon(
+                        imageVector = item.second,
+                        contentDescription = item.first,
+                        modifier = Modifier.size(24.dp),
+                        tint = if (selectedIndex == index) Color.White else Color.Gray
+                    )
+                },
+                label = {
+                    Text(
+                        item.first,
+                        style = TextStyle(
+                            color = if (selectedIndex == index) Color.White else Color.Gray,
+                            fontSize = 14.sp
+                        )
+                    )
+                },
+                colors = NavigationBarItemDefaults.colors(indicatorColor = Color.Transparent)
+            )
+        }
     }
 }
 
@@ -199,7 +218,7 @@ fun FilterCategory(
     onCategorySelected: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val listCategories = listOf("All", "Food", "Clothes", "Electronics", "Book")
+    val listCategories = listOf("All", "Laptop", "Phone", "Screen", "PC")
 
     LazyRow(modifier = Modifier) {
         items(listCategories) { category ->
@@ -218,17 +237,5 @@ fun FilterCategory(
                 )
             )
         }
-    }
-}
-
-@Preview
-@Composable
-private fun BottomAppBarPreview() {
-    EazyShopTheme {
-        EzShopBottomAppBar(
-            onOpenHome = {},
-            onCart = {},
-            onHistory = {}
-        )
     }
 }

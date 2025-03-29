@@ -178,7 +178,7 @@ private fun BaseProductCardPreview() {
                 id = 1,
                 title = "Laptop Gaming",
                 price = 1299.99,
-                image = R.drawable.laptop_gm,
+                image = R.drawable.laptop1,
                 description = "Laptop gaming cấu hình cao",
                 category = "Electronics",
                 quantity = 1

@@ -1,7 +1,5 @@
 package com.example.eazyshop.order
 
-import android.util.Log
-import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -19,15 +17,21 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardDoubleArrowLeft
+import androidx.compose.material.icons.outlined.CreditCard
+import androidx.compose.material.icons.outlined.Money
 import androidx.compose.material.icons.outlined.Place
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -39,11 +43,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -86,7 +93,11 @@ fun OrderScreen(
             )
         }
     ) { paddingValues ->
-        Column(modifier = Modifier.padding(paddingValues)) {
+        Column(
+            modifier = Modifier
+                .padding(paddingValues)
+                .verticalScroll(rememberScrollState())
+        ) {
             AddressCard(
                 country = country,
                 onCountryChange = onCountryChange,
@@ -98,6 +109,25 @@ fun OrderScreen(
                 onWardChange = onWardChange,
                 specific = specific,
                 onSpecificChange = onSpecificChange
+            )
+
+            ProductDetailCard(product = product)
+
+            PaymentMethodsCard()
+
+            PaymentDetailCard(product = product)
+
+            Text(
+                buildAnnotatedString {
+                    append("By clicking \"Order\", you agree to abide by the ")
+
+                    withStyle(style = SpanStyle(color = Color(0xFF00BFFF), fontWeight = FontWeight.Bold)) {
+                        append("Shopoo Terms")
+                    }
+                },
+                lineHeight = 18.sp,
+                fontSize = 13.sp,
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
             )
         }
     }
@@ -213,7 +243,7 @@ fun ProductDetailCard(
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp)
-            .height(200.dp),
+            .height(230.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
@@ -226,7 +256,9 @@ fun ProductDetailCard(
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
             ) {
                 Box(
-                    modifier = Modifier.background(Color(0xFF990000))
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(2.dp))
+                        .background(Color(0xFF990000))
                 ) {
                     Text(
                         "Mail",
@@ -237,13 +269,18 @@ fun ProductDetailCard(
                     )
                 }
                 Spacer(Modifier.width(6.dp))
-                Text("Shopoo", fontWeight = FontWeight.Bold)
+                Text("${product.title}", fontWeight = FontWeight.Bold)
             }
 
             Spacer(Modifier.height(8.dp))
 
-            val thrifty = BigDecimal(product.price * 0.3).setScale(2, RoundingMode.HALF_UP).toDouble()
-            val originalPrice = BigDecimal(product.price + thrifty).setScale(2, RoundingMode.HALF_UP).toDouble()
+            val thrifty =
+                BigDecimal(product.price * 0.05).setScale(2, RoundingMode.HALF_UP).toDouble()
+            val originalPrice =
+                BigDecimal(product.price + thrifty).setScale(2, RoundingMode.HALF_UP).toDouble()
+            val totalPrice =
+                BigDecimal((product.price - thrifty) * product.quantity).setScale(2, RoundingMode.HALF_UP)
+                    .toDouble()
 
             ConstraintLayout(
                 modifier = Modifier
@@ -252,7 +289,6 @@ fun ProductDetailCard(
             ) {
                 val (image, description, price, original, quantity) = createRefs()
 
-
                 Image(
                     painter = rememberAsyncImagePainter(model = product.image),
                     contentDescription = null,
@@ -260,10 +296,10 @@ fun ProductDetailCard(
                         .fillMaxWidth(0.2f)
                         .aspectRatio(1f)
                         .constrainAs(image) {
-                        top.linkTo(parent.top)
-                        start.linkTo(parent.start)
-                        bottom.linkTo(parent.bottom)
-                    }
+                            top.linkTo(parent.top)
+                            start.linkTo(parent.start)
+                            bottom.linkTo(parent.bottom)
+                        }
                 )
 
                 Text(
@@ -276,7 +312,7 @@ fun ProductDetailCard(
                         .constrainAs(description) {
                             start.linkTo(image.end, margin = 8.dp)
                             top.linkTo(parent.top)
-                    }
+                        }
                 )
 
                 Text(
@@ -309,24 +345,63 @@ fun ProductDetailCard(
                 )
             }
 
-            Box(modifier = Modifier
-                .fillMaxWidth()
-                .height(1.dp)
-                .background(Color(0xFFD3D3D3))
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(1.dp)
+                    .background(Color(0xFFD3D3D3))
             )
 
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(horizontal = 16.dp).fillMaxWidth().height(50.dp)
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .fillMaxWidth()
+                    .height(50.dp)
             ) {
-                Text("Shop vouchers", fontSize = 16.sp)
+                Text("Shop vouchers (-5%)", fontSize = 16.sp)
                 Box(
                     modifier = Modifier
                         .border(1.dp, color = Color(0xFFFF3333))
                 ) {
-                    Text("-$$thrifty", fontSize = 12.sp, modifier = Modifier.padding(horizontal = 4.dp))
+                    Text(
+                        "-$$thrifty",
+                        fontSize = 12.sp,
+                        modifier = Modifier.padding(horizontal = 4.dp)
+                    )
                 }
+            }
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(1.dp)
+                    .background(Color(0xFFD3D3D3))
+            )
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                if (product.quantity == 1) {
+                    Text(
+                        "Total Price (${product.quantity} product)"
+                    )
+                } else {
+                    Text(
+                        "Total Price (${product.quantity} products)"
+                    )
+                }
+
+                Text(
+                    "$$totalPrice",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold
+                )
             }
         }
     }
@@ -341,7 +416,7 @@ private fun ProductDetailCardPreview() {
                 id = 1,
                 title = "Laptop Gaming",
                 price = 1299.99,
-                image = R.drawable.headphone_bt,
+                image = R.drawable.phone1,
                 description = "Laptop ASUS TUF Gaming A15 FA506NCR-HN047W",
                 category = "Electronics",
                 quantity = 1
@@ -350,6 +425,187 @@ private fun ProductDetailCardPreview() {
     }
 }
 
+@Composable
+fun PaymentMethodsCard(modifier: Modifier = Modifier) {
+
+    var selectedMethod by remember { mutableStateOf("cash") }
+
+    Card(
+        shape = RoundedCornerShape(16.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp)
+            .height(150.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+    ) {
+        Column(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            Text(
+                "Payment Methods",
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(horizontal = 8.dp, vertical = 12.dp)
+            )
+
+            Column(modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 16.dp)) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        Icons.Outlined.Money,
+                        contentDescription = null,
+                        tint = Color(0xFFFF3333)
+                    )
+                    Spacer(Modifier.width(4.dp))
+                    PaymentOption(
+                        text = "Payment on Receipt",
+                        selected = selectedMethod == "cash",
+                        onSelect = { selectedMethod = "cash" }
+                    )
+                }
+
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        Icons.Outlined.CreditCard,
+                        contentDescription = null,
+                        tint = Color(0xFFFF3333)
+                    )
+                    Spacer(Modifier.width(4.dp))
+                    PaymentOption(
+                        text = "Credit/Debit Card",
+                        selected = selectedMethod == "card",
+                        onSelect = { selectedMethod = "card" }
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun PaymentOption(
+    text: String,
+    selected: Boolean,
+    onSelect: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onSelect() }
+            .padding(vertical = 2.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(text, modifier = Modifier.weight(1f))
+        RadioButton(
+            selected = selected,
+            onClick = onSelect,
+            colors = RadioButtonDefaults.colors(selectedColor = Color(0xFFFF3333))
+        )
+    }
+}
+
+@Composable
+fun PaymentDetailCard(
+    modifier: Modifier = Modifier,
+    product: Product
+) {
+    Card(
+        shape = RoundedCornerShape(16.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp)
+            .height(200.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+    ) {
+        val discount = BigDecimal(product.price * 0.05).setScale(2, RoundingMode.HALF_UP).toDouble()
+        val totalPrice =
+            BigDecimal((product.price - discount) * product.quantity).setScale(2, RoundingMode.HALF_UP)
+                .toDouble()
+        val shippingCharges = BigDecimal(product.price * 0.005).setScale(2, RoundingMode.HALF_UP).toDouble()
+
+        Column(
+            modifier = Modifier.fillMaxSize().padding(16.dp)
+        ) {
+            Text(
+                "Payment Details",
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(vertical = 4.dp)
+            )
+
+            Spacer(Modifier.height(8.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text("Total Price", fontSize = 14.sp)
+                Text("$$totalPrice", fontSize = 14.sp)
+            }
+
+            Spacer(Modifier.height(8.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text("Total shipping charges", fontSize = 14.sp)
+                Text("$$shippingCharges", fontSize = 14.sp)
+            }
+
+            Spacer(Modifier.height(8.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text("Shipping fee discounts", fontSize = 14.sp)
+                Text("-$$shippingCharges", fontSize = 14.sp, color = Color(0xFFFF3333))
+            }
+
+            Spacer(Modifier.height(8.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text("Total Payment", fontSize = 14.sp)
+                Text("$$totalPrice", fontSize = 14.sp)
+            }
+
+            Spacer(Modifier.height(8.dp))
+
+
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun PaymentDetailCardPreview() {
+    PaymentDetailCard(
+        product = Product(
+            id = 1,
+            title = "Laptop Gaming",
+            price = 1299.99,
+            image = R.drawable.laptop1,
+            description = "Laptop ASUS TUF Gaming A15 FA506NCR-HN047W",
+            category = "Electronics",
+            quantity = 1
+        )
+    )
+}
+
+@Preview
+@Composable
+private fun PaymentMethodsCardPreview() {
+    PaymentMethodsCard()
+}
 
 @Composable
 fun AddressTextField(
@@ -417,12 +673,7 @@ fun BottomOrderBar(
     onOrder: () -> Unit,
     isOrderEnabled: Boolean
 ) {
-    Log.d(
-        "BottomOrderBar",
-        "Product ID: ${product.id}, Quantity: ${product.quantity}, Price: ${product.price}"
-    )
-
-    val discount = BigDecimal(product.price * 0.3).setScale(2, RoundingMode.HALF_UP).toDouble()
+    val discount = BigDecimal(product.price * 0.05).setScale(2, RoundingMode.HALF_UP).toDouble()
     val totalPrice =
         BigDecimal((product.price - discount) * product.quantity).setScale(2, RoundingMode.HALF_UP)
             .toDouble()
@@ -503,7 +754,7 @@ fun PreviewOrderScreen() {
             id = 1,
             title = "Laptop Gaming",
             price = 1299.99,
-            image = R.drawable.laptop_gm,
+            image = R.drawable.laptop1,
             description = "Laptop ASUS TUF Gaming A15 FA506NCR-HN047W",
             category = "Electronics",
             quantity = 1

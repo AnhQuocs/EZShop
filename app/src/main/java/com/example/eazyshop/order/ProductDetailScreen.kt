@@ -32,11 +32,15 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -56,6 +60,9 @@ import androidx.navigation.compose.rememberNavController
 import com.example.eazyshop.R
 import com.example.eazyshop.data.model.Product
 import com.example.eazyshop.ui.theme.EazyShopTheme
+import kotlinx.coroutines.launch
+import java.math.BigDecimal
+import java.math.RoundingMode
 
 @Composable
 fun ProductDetailScreen(
@@ -68,11 +75,21 @@ fun ProductDetailScreen(
 
     var quantity by remember { mutableStateOf(1) }
 
+    val snackbarHostState = remember { SnackbarHostState() }
+    val coroutineScope = rememberCoroutineScope()
+
     Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         bottomBar = {
             BottomProductDetailScreen(
                 navController = navController,
-                onAddToCart = onAddToCart,
+                onAddToCart = {
+                    onAddToCart()
+                    coroutineScope.launch {
+                        if (snackbarHostState.currentSnackbarData == null) {
+                            snackbarHostState.showSnackbar("Add to cart successfully!", duration = SnackbarDuration.Short)
+                        }
+                    }},
                 product = product,
                 quantity = quantity
             )
@@ -107,7 +124,7 @@ fun ProductDetailScreen(
                             .clip(CircleShape)
                             .size(35.dp)
                             .background(color = Color.LightGray)
-                            .clickable { navController.popBackStack() }
+                            .clickable { navController.navigate("home") }
                             .constrainAs(backBtn) {
                                 top.linkTo(parent.top, margin = 8.dp)
                                 start.linkTo(parent.start, margin = 8.dp)
@@ -123,7 +140,7 @@ fun ProductDetailScreen(
                 }
             }
 
-            val originalPrice = product.price + (product.price * 0.3)
+            val originalPrice = BigDecimal(product.price + product.price * 0.05f).setScale(2, RoundingMode.HALF_UP).toDouble()
 
             Column(
                 modifier = Modifier
@@ -351,7 +368,10 @@ fun ProductDetailScreen(
                                         .size(24.dp)
                                         .background(Color.White)
                                         .clickable(enabled = quantity > 1) { quantity-- }
-                                        .border(1.dp, color = if (quantity > 1) Color.Gray else Color.LightGray),
+                                        .border(
+                                            1.dp,
+                                            color = if (quantity > 1) Color.Gray else Color.LightGray
+                                        ),
                                     contentAlignment = Alignment.Center
                                 ) {
                                     Text("-", lineHeight = 1.sp, color = if (quantity > 1) Color.Black else Color.LightGray)
@@ -469,7 +489,7 @@ private fun BottomOrderScreenPreview() {
                 id = 1,
                 title = "Laptop Gaming",
                 price = 1299.99,
-                image = R.drawable.laptop_gm,
+                image = R.drawable.laptop1,
                 description = "Laptop ASUS TUF Gaming A15 FA506NCR-HN047W",
                 category = "Electronics",
                 quantity = 1

@@ -1,13 +1,17 @@
 package com.example.eazyshop.order
 
 import android.util.Log
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -35,11 +39,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import coil.compose.rememberAsyncImagePainter
 import com.example.eazyshop.R
 import com.example.eazyshop.data.model.Product
 import com.example.eazyshop.ui.theme.EazyShopTheme
@@ -61,7 +72,8 @@ fun OrderScreen(
     onWardChange: (String) -> Unit,
     specific: String,
     onSpecificChange: (String) -> Unit,
-    onOrder: () -> Unit
+    onOrder: () -> Unit,
+    isOrderEnabled: Boolean
 ) {
     Scaffold(
         topBar = { TopOrderBar(navController = navController) },
@@ -69,7 +81,8 @@ fun OrderScreen(
             BottomOrderBar(
                 navController = navController,
                 product = product, // Truyền product đã cập nhật quantity
-                onOrder = onOrder
+                onOrder = onOrder,
+                isOrderEnabled = isOrderEnabled
             )
         }
     ) { paddingValues ->
@@ -191,17 +204,131 @@ fun AddressCard(
 
 @Composable
 fun ProductDetailCard(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    product: Product
 ) {
+    val wavyFont = FontFamily(Font(R.font.wavy_font))
     Card(
         shape = RoundedCornerShape(16.dp),
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp),
+            .padding(8.dp)
+            .height(200.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+            ) {
+                Box(
+                    modifier = Modifier.background(Color(0xFF990000))
+                ) {
+                    Text(
+                        "Mail",
+                        lineHeight = 16.sp,
+                        fontFamily = wavyFont,
+                        color = Color.White,
+                        modifier = Modifier.padding(horizontal = 2.dp)
+                    )
+                }
+                Spacer(Modifier.width(6.dp))
+                Text("Shopoo", fontWeight = FontWeight.Bold)
+            }
 
+            Spacer(Modifier.height(8.dp))
+
+            val thrifty = BigDecimal(product.price * 0.3).setScale(2, RoundingMode.HALF_UP).toDouble()
+            val originalPrice = BigDecimal(product.price + thrifty).setScale(2, RoundingMode.HALF_UP).toDouble()
+
+            ConstraintLayout(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 0.dp, start = 16.dp, end = 16.dp, bottom = 8.dp)
+            ) {
+                val (image, description, price, original, quantity) = createRefs()
+
+
+                Image(
+                    painter = rememberAsyncImagePainter(model = product.image),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .fillMaxWidth(0.2f)
+                        .aspectRatio(1f)
+                        .constrainAs(image) {
+                        top.linkTo(parent.top)
+                        start.linkTo(parent.start)
+                        bottom.linkTo(parent.bottom)
+                    }
+                )
+
+                Text(
+                    text = product.description,
+                    fontSize = 14.sp,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier
+                        .fillMaxWidth(0.8f)
+                        .constrainAs(description) {
+                            start.linkTo(image.end, margin = 8.dp)
+                            top.linkTo(parent.top)
+                    }
+                )
+
+                Text(
+                    "$${product.price}",
+                    fontSize = 16.sp,
+                    modifier = Modifier.constrainAs(price) {
+                        start.linkTo(image.end, margin = 8.dp)
+                        bottom.linkTo(parent.bottom)
+                    }
+                )
+
+                Text(
+                    "$$originalPrice",
+                    fontSize = 12.sp,
+                    color = Color.Gray,
+                    textDecoration = TextDecoration.LineThrough,
+                    modifier = Modifier.constrainAs(original) {
+                        start.linkTo(price.end, margin = 4.dp)
+                        bottom.linkTo(parent.bottom)
+                    }
+                )
+
+                Text(
+                    "x${product.quantity}",
+                    fontSize = 15.sp,
+                    modifier = Modifier.constrainAs(quantity) {
+                        bottom.linkTo(parent.bottom)
+                        end.linkTo(parent.end)
+                    }
+                )
+            }
+
+            Box(modifier = Modifier
+                .fillMaxWidth()
+                .height(1.dp)
+                .background(Color(0xFFD3D3D3))
+            )
+
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(horizontal = 16.dp).fillMaxWidth().height(50.dp)
+            ) {
+                Text("Shop vouchers", fontSize = 16.sp)
+                Box(
+                    modifier = Modifier
+                        .border(1.dp, color = Color(0xFFFF3333))
+                ) {
+                    Text("-$$thrifty", fontSize = 12.sp, modifier = Modifier.padding(horizontal = 4.dp))
+                }
+            }
+        }
     }
 }
 
@@ -209,7 +336,17 @@ fun ProductDetailCard(
 @Composable
 private fun ProductDetailCardPreview() {
     EazyShopTheme {
-        ProductDetailCard()
+        ProductDetailCard(
+            product = Product(
+                id = 1,
+                title = "Laptop Gaming",
+                price = 1299.99,
+                image = R.drawable.headphone_bt,
+                description = "Laptop ASUS TUF Gaming A15 FA506NCR-HN047W",
+                category = "Electronics",
+                quantity = 1
+            )
+        )
     }
 }
 
@@ -277,13 +414,20 @@ fun BottomOrderBar(
     navController: NavController,
     modifier: Modifier = Modifier,
     product: Product,
-    onOrder: () -> Unit
+    onOrder: () -> Unit,
+    isOrderEnabled: Boolean
 ) {
-    Log.d("BottomOrderBar", "Product ID: ${product.id}, Quantity: ${product.quantity}, Price: ${product.price}")
+    Log.d(
+        "BottomOrderBar",
+        "Product ID: ${product.id}, Quantity: ${product.quantity}, Price: ${product.price}"
+    )
 
     val discount = BigDecimal(product.price * 0.3).setScale(2, RoundingMode.HALF_UP).toDouble()
-    val totalPrice = BigDecimal((product.price - discount) * product.quantity).setScale(2, RoundingMode.HALF_UP).toDouble()
-    val thrifty = BigDecimal(discount * product.quantity).setScale(2, RoundingMode.HALF_UP).toDouble()
+    val totalPrice =
+        BigDecimal((product.price - discount) * product.quantity).setScale(2, RoundingMode.HALF_UP)
+            .toDouble()
+    val thrifty =
+        BigDecimal(discount * product.quantity).setScale(2, RoundingMode.HALF_UP).toDouble()
 
     Box(
         modifier = Modifier
@@ -332,8 +476,8 @@ fun BottomOrderBar(
                     .padding(vertical = 8.dp)
                     .fillMaxHeight()
                     .clip(RoundedCornerShape(6.dp))
-                    .background(Color(0xFFFF3333))
-                    .clickable { onOrder() },
+                    .background(Color(0xFFFF3333).copy(alpha = if (isOrderEnabled) 1f else 0.5f))
+                    .clickable(enabled = isOrderEnabled) { onOrder() },
                 contentAlignment = Alignment.Center
             ) {
                 Text("Order", color = Color.White)
@@ -374,7 +518,8 @@ fun PreviewOrderScreen() {
         onWardChange = { ward = it },
         specific = specific,
         onSpecificChange = { specific = it },
-        onOrder = { /* Handle order in preview */ }
+        onOrder = { /* Handle order in preview */ },
+        isOrderEnabled = true
     )
 }
 

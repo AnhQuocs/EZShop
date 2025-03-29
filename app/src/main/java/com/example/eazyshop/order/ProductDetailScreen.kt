@@ -16,7 +16,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircleOutline
 import androidx.compose.material.icons.filled.Favorite
@@ -127,6 +129,7 @@ fun ProductDetailScreen(
                 modifier = Modifier
                     .weight(0.5f)
                     .padding(top = 8.dp)
+                    .verticalScroll(rememberScrollState())
             ) {
                 Box(
                     modifier = Modifier
@@ -246,16 +249,19 @@ fun ProductDetailScreen(
                         text = product.description,
                         fontSize = 15.sp,
                         modifier = Modifier
-                            .padding(12.dp),
+                            .padding(horizontal = 16.dp, vertical = 16.dp),
                         lineHeight = 20.sp
                     )
+
                     Box(modifier = Modifier
                         .fillMaxWidth()
                         .height(1.dp)
-                        .background(Color(0xFFD3D3D3)))
+                        .background(Color(0xFFD3D3D3))
+                    )
+
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 16.dp)
                     ) {
                         Icon(
                             Icons.Outlined.LocalShipping,
@@ -283,13 +289,16 @@ fun ProductDetailScreen(
                             )
                         }
                     }
+
                     Box(modifier = Modifier
                         .fillMaxWidth()
                         .height(1.dp)
-                        .background(Color(0xFFD3D3D3)))
+                        .background(Color(0xFFD3D3D3))
+                    )
+
                     Row(
                         modifier = Modifier
-                            .padding(horizontal = 16.dp, vertical = 8.dp),
+                            .padding(horizontal = 16.dp, vertical = 14.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
@@ -312,7 +321,7 @@ fun ProductDetailScreen(
                     )
 
                     Box(
-                        modifier = Modifier.padding(vertical = 4.dp, horizontal = 8.dp)
+                        modifier = Modifier.padding(vertical = 5.dp, horizontal = 8.dp)
                     ) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,

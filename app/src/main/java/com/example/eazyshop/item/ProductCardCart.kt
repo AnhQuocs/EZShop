@@ -11,12 +11,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.eazyshop.base.BaseProductCard
 import com.example.eazyshop.data.model.CartItem
 import com.example.eazyshop.data.model.Product
 
 @Composable
 fun ProductCardCart(
+    navController: NavController,
     modifier: Modifier = Modifier,
     product: Product,
     cartItem: CartItem,
@@ -26,6 +28,7 @@ fun ProductCardCart(
     onDecreaseQuantity: () -> Unit
 ) {
     BaseProductCard(
+        navController = navController,
         product = product,
         buttonText = "Xóa",
         onActive = onRemoveFromCart,

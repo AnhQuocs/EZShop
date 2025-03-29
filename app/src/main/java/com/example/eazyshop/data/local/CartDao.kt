@@ -19,4 +19,8 @@ interface CartDao {
 
     @Query("DELETE FROM cart_items WHERE productId = :productId")
     suspend fun removeFromCart(productId: Int)
+
+    // ✅ Thêm Query kiểm tra sản phẩm đã có chưa
+    @Query("SELECT COUNT(*) FROM cart_items WHERE productId = :productId")
+    suspend fun isProductInCart(productId: Int): Int
 }

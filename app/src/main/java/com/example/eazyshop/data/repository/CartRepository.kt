@@ -11,7 +11,10 @@ class CartRepository @Inject constructor(
     val cartItems: Flow<List<CartItem>> = cartDao.getCartItems()
 
     suspend fun addToCart(cartItem: CartItem) {
-        cartDao.addToCart(cartItem)
+        val isExist = cartDao.isProductInCart(cartItem.productId) > 0
+        if (!isExist) {
+            cartDao.addToCart(cartItem)
+        }
     }
 
     suspend fun removeFromCart(productId: Int) {

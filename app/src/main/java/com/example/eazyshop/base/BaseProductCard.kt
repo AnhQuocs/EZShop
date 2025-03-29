@@ -1,6 +1,7 @@
 package com.example.eazyshop.base
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -34,12 +35,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.eazyshop.R
 import com.example.eazyshop.data.model.Product
 import com.example.eazyshop.ui.theme.EazyShopTheme
 
 @Composable
 fun BaseProductCard(
+    navController: NavController,
     modifier: Modifier = Modifier,
     product: Product,
     buttonText: String,
@@ -52,7 +56,8 @@ fun BaseProductCard(
         modifier = Modifier
             .width(200.dp)
             .padding(6.dp)
-            .height(330.dp),
+            .height(330.dp)
+            .clickable { navController.navigate("productDetail/${product.id}") },
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         ConstraintLayout(
@@ -165,8 +170,10 @@ fun BaseProductCard(
 @Preview(showBackground = true)
 @Composable
 private fun BaseProductCardPreview() {
+    val navController = rememberNavController()
     EazyShopTheme {
         BaseProductCard(
+            navController = navController,
             product = Product(
                 id = 1,
                 title = "Laptop Gaming",

@@ -108,6 +108,7 @@ fun HomeScreen(
             ) {
                 items(filteredProducts) { product ->
                     ProductCardHome(
+                        navController = navController,
                         product = product,
                         onAddToCart = { cartViewModel.addToCart(product) },
                         onBuy = {navController.navigate("productDetail/${product.id}")}

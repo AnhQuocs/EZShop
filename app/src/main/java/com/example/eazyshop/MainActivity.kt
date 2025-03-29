@@ -11,6 +11,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -120,6 +121,13 @@ fun Greeting(
                 var ward by remember { mutableStateOf("") }
                 var specific by remember { mutableStateOf("") }
 
+                val isValid by remember {
+                    derivedStateOf {
+                        country.isNotBlank() && city.isNotBlank() && district.isNotBlank() &&
+                                ward.isNotBlank() && specific.isNotBlank()
+                    }
+                }
+
                 OrderScreen(
                     navController = navController,
                     product = product.copy(quantity = quantity), // Truyền sản phẩm có số lượng đúng
@@ -134,24 +142,27 @@ fun Greeting(
                     specific = specific,
                     onSpecificChange = { specific = it },
                     onOrder = {
-                        val address = Address(
-                            productId = product.id,
-                            country = country,
-                            city = city,
-                            district = district,
-                            ward = ward,
-                            specific = specific
-                        )
-                        addressViewModel.saveAddress(address)
+                        if (isValid) {
+                            val address = Address(
+                                productId = product.id,
+                                country = country,
+                                city = city,
+                                district = district,
+                                ward = ward,
+                                specific = specific
+                            )
+                            addressViewModel.saveAddress(address)
 
-                        val orderHistory = OrderHistory(
-                            productId = product.id,
-                            addressId = address.orderId
-                        )
-                        orderHistoryViewModel.insertOrder(orderHistory)
+                            val orderHistory = OrderHistory(
+                                productId = product.id,
+                                addressId = address.orderId
+                            )
+                            orderHistoryViewModel.insertOrder(orderHistory)
 
-                        navController.navigate("check")
-                    }
+                            navController.navigate("check")
+                        }
+                    },
+                    isOrderEnabled = isValid  // Truyền trạng thái vào để vô hiệu hóa nút Order
                 )
             } else {
                 Text("Product not found") // Hiển thị nếu không có sản phẩm

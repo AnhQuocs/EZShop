@@ -13,7 +13,7 @@ interface OrderHistoryDao {
     suspend fun insertOrder(orderHistory: OrderHistory)
 
     @Query("SELECT * FROM order_history WHERE productId = :productId ORDER BY createdAt DESC")
-    fun getOrdersByUser(productId: String): Flow<List<OrderHistory>>
+    fun getOrdersByProductId(productId: Int): Flow<List<OrderHistory>>
 
     @Query("SELECT * FROM order_history WHERE id = :orderId LIMIT 1")
     suspend fun getOrderById(orderId: String): OrderHistory?

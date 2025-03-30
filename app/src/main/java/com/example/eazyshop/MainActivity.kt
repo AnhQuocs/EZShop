@@ -1,6 +1,7 @@
 package com.example.eazyshop
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -31,6 +32,8 @@ import com.example.eazyshop.data.model.Address
 import com.example.eazyshop.data.model.OrderHistory
 import com.example.eazyshop.home.HomeScreen
 import com.example.eazyshop.home.MainScreen
+import com.example.eazyshop.order.CartScreen
+import com.example.eazyshop.order.OrderDetailScreen
 import com.example.eazyshop.order.OrderScreen
 import com.example.eazyshop.order.ProductDetailScreen
 import com.example.eazyshop.ui.theme.EazyShopTheme
@@ -161,7 +164,7 @@ fun Greeting(
                             )
                             orderHistoryViewModel.insertOrder(orderHistory)
 
-                            navController.navigate("check/${product.id}")
+                            navController.navigate("check/${product.id}?quantity=$quantity")
                         }
                     },
                     isOrderEnabled = isValid  // Truyền trạng thái vào để vô hiệu hóa nút Order
@@ -171,17 +174,47 @@ fun Greeting(
             }
         }
 
-        composable("check/{productId}")
-        { backStackEntry ->
+        composable(
+            "check/{productId}?quantity={quantity}",
+            arguments = listOf(
+                navArgument("productId") { type = NavType.StringType },
+                navArgument("quantity") { type = NavType.IntType; defaultValue = 1 }
+            )
+        ) { backStackEntry ->
             val productId = backStackEntry.arguments?.getString("productId") ?: ""
-            val product = products.find { it.id == productId.toIntOrNull() } // Tìm sản phẩm trong danh sách
+            val quantity = backStackEntry.arguments?.getInt("quantity") ?: 1
+
+            val product = products.find { it.id == productId.toIntOrNull() }
             if (product != null) {
-                CheckOrderScreen (
-                    product = product,
-                    navController = navController,
-                ) // Gọi OrderScreen với sản phẩm tìm được
+                CheckOrderScreen(
+                    product = product.copy(quantity = quantity),
+                    navController = navController
+                )
             } else {
-                Text("Product not found") // Hiển thị thông báo nếu không tìm thấy sản phẩm
+                Text("Product not found")
+            }
+        }
+
+        composable(
+            "orderInfo/{productId}?quantity={quantity}",
+            arguments = listOf(
+                navArgument("productId") { type = NavType.StringType },
+                navArgument("quantity") { type = NavType.IntType; defaultValue = 1 }
+            )
+        ) { backStackEntry ->
+            val productId = backStackEntry.arguments?.getString("productId")?.toIntOrNull()
+            val product = products.find { it.id == productId }
+            val quantity = backStackEntry.arguments?.getInt("quantity") ?: product?.quantity ?: 1
+
+            if (productId != null && product != null) {
+                OrderDetailScreen(
+                    productId = productId,
+                    product = product.copy(quantity = quantity), // ✅ Cập nhật số lượng
+                    addressViewModel = addressViewModel,
+                    orderHistoryViewModel = orderHistoryViewModel
+                )
+            } else {
+                Text("Invalid Product ID or Product not found")
             }
         }
     }

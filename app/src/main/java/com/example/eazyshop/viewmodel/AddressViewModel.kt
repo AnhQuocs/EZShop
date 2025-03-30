@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.eazyshop.data.model.Address
 import com.example.eazyshop.data.repository.AddressRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -18,4 +19,7 @@ class AddressViewModel @Inject constructor(
             addressRepository.saveAddress(address)
         }
     }
+
+    fun getAddress(productId: Int): Flow<List<Address>> =
+        addressRepository.getAddress(productId)
 }

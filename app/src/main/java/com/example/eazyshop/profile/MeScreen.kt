@@ -1,4 +1,4 @@
-package com.example.eazyshop.order
+package com.example.eazyshop.profile
 
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable

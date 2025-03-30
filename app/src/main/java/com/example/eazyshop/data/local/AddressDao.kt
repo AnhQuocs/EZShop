@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.example.eazyshop.data.model.Address
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface AddressDao {
@@ -12,5 +13,6 @@ interface AddressDao {
     suspend fun insertAddress(address: Address)
 
     @Query("SELECT * FROM address WHERE productId = :productId")
-    suspend fun getAddressByProductId(productId: String): List<Address>
+    fun getAddressByProductId(productId: Int): Flow<List<Address>>
 }
+

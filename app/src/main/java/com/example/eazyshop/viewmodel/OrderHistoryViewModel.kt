@@ -14,8 +14,8 @@ class OrderHistoryViewModel @Inject constructor(
     private val repository: OrderHistoryRepository
 ) : ViewModel() {
 
-    fun getOrdersByUser(userId: String): Flow<List<OrderHistory>> =
-        repository.getOrdersByUser(userId)
+    fun getOrdersByProductId(productId: Int): Flow<List<OrderHistory>> =
+        repository.getOrdersBYProductId(productId)
 
     fun insertOrder(orderHistory: OrderHistory) {
         viewModelScope.launch {

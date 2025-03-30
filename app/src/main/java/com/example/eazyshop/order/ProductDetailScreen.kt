@@ -140,7 +140,10 @@ fun ProductDetailScreen(
                 }
             }
 
-            val originalPrice = BigDecimal(product.price + product.price * 0.05f).setScale(2, RoundingMode.HALF_UP).toDouble()
+            val thrifty =
+                BigDecimal(product.price * 0.05).setScale(2, RoundingMode.HALF_UP).toDouble()
+            val originalPrice =
+                BigDecimal(product.price + thrifty).setScale(2, RoundingMode.HALF_UP).toDouble()
 
             Column(
                 modifier = Modifier

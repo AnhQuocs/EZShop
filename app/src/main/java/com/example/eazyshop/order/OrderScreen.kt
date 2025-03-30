@@ -269,17 +269,17 @@ fun ProductDetailCard(
                     )
                 }
                 Spacer(Modifier.width(6.dp))
-                Text("${product.title}", fontWeight = FontWeight.Bold)
+                Text(text = product.title, fontWeight = FontWeight.Bold)
             }
 
             Spacer(Modifier.height(8.dp))
 
             val thrifty =
-                BigDecimal(product.price * 0.05).setScale(2, RoundingMode.HALF_UP).toDouble()
+                BigDecimal(product.price * 0.05 * product.quantity).setScale(2, RoundingMode.HALF_UP).toDouble()
             val originalPrice =
                 BigDecimal(product.price + thrifty).setScale(2, RoundingMode.HALF_UP).toDouble()
             val totalPrice =
-                BigDecimal((product.price - thrifty) * product.quantity).setScale(2, RoundingMode.HALF_UP)
+                BigDecimal(product.price * product.quantity - thrifty).setScale(2, RoundingMode.HALF_UP)
                     .toDouble()
 
             ConstraintLayout(
@@ -389,11 +389,13 @@ fun ProductDetailCard(
             ) {
                 if (product.quantity == 1) {
                     Text(
-                        "Total Price (${product.quantity} product)"
+                        "Total Price (${product.quantity} product)",
+                        fontSize = 15.sp
                     )
                 } else {
                     Text(
-                        "Total Price (${product.quantity} products)"
+                        "Total Price (${product.quantity} products)",
+                        fontSize = 15.sp
                     )
                 }
 
@@ -415,11 +417,11 @@ private fun ProductDetailCardPreview() {
             product = Product(
                 id = 1,
                 title = "Laptop Gaming",
-                price = 1299.99,
+                price = 1239.99,
                 image = R.drawable.phone1,
                 description = "Laptop ASUS TUF Gaming A15 FA506NCR-HN047W",
                 category = "Electronics",
-                quantity = 1
+                quantity = 3
             )
         )
     }
@@ -445,7 +447,7 @@ fun PaymentMethodsCard(modifier: Modifier = Modifier) {
             Text(
                 "Payment Methods",
                 fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(horizontal = 8.dp, vertical = 12.dp)
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
             )
 
             Column(modifier = Modifier
@@ -497,10 +499,10 @@ fun PaymentOption(
         modifier = Modifier
             .fillMaxWidth()
             .clickable { onSelect() }
-            .padding(vertical = 2.dp),
+            .padding(vertical = 1.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(text, modifier = Modifier.weight(1f))
+        Text(text, modifier = Modifier.weight(1f), fontSize = 15.sp)
         RadioButton(
             selected = selected,
             onClick = onSelect,
@@ -753,11 +755,11 @@ fun PreviewOrderScreen() {
         product = Product(
             id = 1,
             title = "Laptop Gaming",
-            price = 1299.99,
+            price = 1239.99,
             image = R.drawable.laptop1,
             description = "Laptop ASUS TUF Gaming A15 FA506NCR-HN047W",
             category = "Electronics",
-            quantity = 1
+            quantity = 3
         ),
         country = country,
         onCountryChange = { country = it },

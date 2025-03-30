@@ -54,7 +54,7 @@ import com.example.eazyshop.data.model.CartItem
 import com.example.eazyshop.item.ProductCardHome
 import com.example.eazyshop.order.CartScreen
 import com.example.eazyshop.order.HistoryScreen
-import com.example.eazyshop.order.MeScreen
+import com.example.eazyshop.profile.MeScreen
 import com.example.eazyshop.viewmodel.CartViewModel
 import com.example.eazyshop.viewmodel.ProductViewModel
 import kotlinx.coroutines.launch

@@ -1,5 +1,6 @@
 package com.example.eazyshop.check
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -44,6 +45,8 @@ fun CheckOrderScreen(
     product: Product,
     modifier: Modifier = Modifier
 ) {
+    Log.d("OrderDetailScreen", "Received quantity: ${product.quantity}")
+
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -107,7 +110,8 @@ fun CheckOrderScreen(
                     Box(
                         modifier = Modifier
                             .weight(1f)
-                            .border(1.dp, color = Color.White, shape = RoundedCornerShape(4.dp)),
+                            .border(1.dp, color = Color.White, shape = RoundedCornerShape(4.dp))
+                            .clickable { navController.navigate("orderInfo/${product.id}?quantity=${product.quantity}") },
                         contentAlignment = Alignment.Center
                     ) {
                         Text("Purchase Order", color = Color.White, lineHeight = 36.sp)
@@ -131,21 +135,6 @@ fun CheckOrderScreen(
                     modifier = Modifier.size(32.dp)
                 )
             }
-
-            IconButton(
-                onClick = {},
-                modifier = Modifier.constrainAs(onCart) {
-                    top.linkTo(parent.top, margin = 24.dp)
-                    end.linkTo(parent.end)
-                }
-            ) {
-                Icon(
-                    Icons.Default.ShoppingCart,
-                    contentDescription = null,
-                    tint = Color.White
-                )
-            }
-
         }
 
         Box(

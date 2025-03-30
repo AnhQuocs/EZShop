@@ -9,13 +9,13 @@ class Converters {
 
     @TypeConverter
     fun fromLocalDateTime(dateTime: LocalDateTime?): String? {
-        return dateTime?.format(formatter)
+        return dateTime?.format(formatter) // Chuyển LocalDateTime thành chuỗi
     }
 
     @TypeConverter
     fun toLocalDateTime(dateTimeString: String?): LocalDateTime? {
         return dateTimeString?.let {
-            LocalDateTime.parse(it, formatter)
+            LocalDateTime.parse(it, formatter) // Chuyển chuỗi về LocalDateTime
         }
     }
 }

@@ -166,12 +166,15 @@ fun CartScreen(
                             cartItem = item,
                             onDeleteFromCart = {
                                 onDeleteFromCart(item)
-                                coroutineScope.launch {
-                                    snackbarHostState.showSnackbar(
-                                        message = "Successful product deletion",
-                                        actionLabel = "OK",
-                                        duration = SnackbarDuration.Short
-                                    )
+
+                                if(snackbarHostState.currentSnackbarData == null) {
+                                    coroutineScope.launch {
+                                        snackbarHostState.showSnackbar(
+                                            message = "Successful product deletion",
+                                            actionLabel = "OK",
+                                            duration = SnackbarDuration.Short
+                                        )
+                                    }
                                 }
                             },
                             onBuy = { product?.let { navController.navigate("productDetail/${it.id}") } }

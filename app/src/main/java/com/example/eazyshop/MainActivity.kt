@@ -5,6 +5,11 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
@@ -70,13 +75,38 @@ fun Greeting(
     addressViewModel: AddressViewModel = hiltViewModel(),
     orderHistoryViewModel: OrderHistoryViewModel = hiltViewModel()
 ) {
-    val navController  = rememberNavController()
+    val navController = rememberNavController()
     val products by viewModel.products.observeAsState(initial = emptyList())
     val cartItems by cartViewModel.cartItems.observeAsState(initial = emptyList())
 
     NavHost(
         navController = navController,
-        startDestination = "home"
+        startDestination = "home",
+        // Thêm hiệu ứng chuyển cảnh mặc định cho tất cả các màn hình
+        enterTransition = {
+            slideInHorizontally(
+                initialOffsetX = { fullWidth -> fullWidth }, // Slide từ phải sang trái
+                animationSpec = tween(300) // Thời gian 300ms
+            ) + fadeIn(animationSpec = tween(300))
+        },
+        exitTransition = {
+            slideOutHorizontally(
+                targetOffsetX = { fullWidth -> -fullWidth }, // Slide ra bên trái
+                animationSpec = tween(300)
+            ) + fadeOut(animationSpec = tween(300))
+        },
+        popEnterTransition = {
+            slideInHorizontally(
+                initialOffsetX = { fullWidth -> -fullWidth }, // Slide từ trái sang phải khi quay lại
+                animationSpec = tween(300)
+            ) + fadeIn(animationSpec = tween(300))
+        },
+        popExitTransition = {
+            slideOutHorizontally(
+                targetOffsetX = { fullWidth -> fullWidth }, // Slide ra bên phải khi quay lại
+                animationSpec = tween(300)
+            ) + fadeOut(animationSpec = tween(300))
+        }
     ) {
         composable("home") {
             MainScreen(navController, cartViewModel = cartViewModel, cartItems = cartItems)
@@ -84,25 +114,25 @@ fun Greeting(
 
         composable(
             "productDetail/{productId}",
-            arguments = listOf(navArgument("productId") {type = NavType.StringType})
-        ) {
-            backStackEntry ->
+            arguments = listOf(navArgument("productId") { type = NavType.StringType })
+        ) { backStackEntry ->
             val productId = backStackEntry.arguments?.getString("productId") ?: ""
-            val product = products.find { it.id == productId.toIntOrNull() } // Tìm sản phẩm trong danh sách
+            val product = products.find { it.id == productId.toIntOrNull() }
             if (product != null) {
-                ProductDetailScreen (
+                ProductDetailScreen(
                     navController,
                     product = product,
-                    onAddToCart = {cartViewModel.addToCart(product)},
-                ) // Gọi OrderScreen với sản phẩm tìm được
+                    onAddToCart = { cartViewModel.addToCart(product) },
+                )
             } else {
-                Text("Product not found") // Hiển thị thông báo nếu không tìm thấy sản phẩm
+                Text("Product not found")
             }
         }
 
-        composable("backHome",
-            enterTransition = {null},
-            exitTransition = {null}
+        composable(
+            "backHome",
+            enterTransition = { null }, // Tắt hiệu ứng cho màn hình này nếu cần
+            exitTransition = { null }
         ) {
             HomeScreen(navController)
         }
@@ -135,7 +165,7 @@ fun Greeting(
 
                 OrderScreen(
                     navController = navController,
-                    product = product.copy(quantity = quantity), // Truyền sản phẩm có số lượng đúng
+                    product = product.copy(quantity = quantity),
                     country = country,
                     onCountryChange = { country = it },
                     city = city,
@@ -167,10 +197,10 @@ fun Greeting(
                             navController.navigate("check/${product.id}?quantity=$quantity")
                         }
                     },
-                    isOrderEnabled = isValid  // Truyền trạng thái vào để vô hiệu hóa nút Order
+                    isOrderEnabled = isValid
                 )
             } else {
-                Text("Product not found") // Hiển thị nếu không có sản phẩm
+                Text("Product not found")
             }
         }
 
@@ -210,7 +240,7 @@ fun Greeting(
                 OrderDetailScreen(
                     navController = navController,
                     productId = productId,
-                    product = product.copy(quantity = quantity), // ✅ Cập nhật số lượng
+                    product = product.copy(quantity = quantity),
                     addressViewModel = addressViewModel,
                     orderHistoryViewModel = orderHistoryViewModel
                 )

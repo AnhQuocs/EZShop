@@ -532,7 +532,7 @@ fun ExpandablePriceSection(
         ) {
             Row{
                 Text(
-                    text = "Grand total: ",
+                    text = "Total amount: ",
                     fontSize = 14.sp,
                     lineHeight = 14.sp
                 )

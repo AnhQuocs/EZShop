@@ -58,6 +58,9 @@ fun BaseProductCard(
             .padding(6.dp)
             .height(330.dp)
             .clickable { navController.navigate("productDetail/${product.id}") },
+        colors = CardDefaults.cardColors(
+            containerColor = Color.White
+        ),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         ConstraintLayout(

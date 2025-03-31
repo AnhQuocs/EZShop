@@ -188,7 +188,7 @@ fun AddressCard(
                         .fillMaxWidth(),
                     value = city,
                     onValueChange = onCityChange,
-                    label = "City"
+                    label = "City/Prov"
                 )
             }
 

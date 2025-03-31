@@ -20,15 +20,24 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DeleteForever
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -49,6 +58,7 @@ import com.example.eazyshop.R
 import com.example.eazyshop.data.model.CartItem
 import com.example.eazyshop.viewmodel.CartViewModel
 import com.example.eazyshop.viewmodel.ProductViewModel
+import kotlinx.coroutines.launch
 import java.math.BigDecimal
 import java.math.RoundingMode
 
@@ -61,46 +71,112 @@ fun CartScreen(
     viewModel: ProductViewModel = hiltViewModel()
 ) {
     val cartItems by cartViewModel.cartItems.observeAsState(initial = emptyList())
+    val products by viewModel.products.observeAsState(initial = emptyList())
 
     val wavyFont = FontFamily(Font(R.font.wavy_font))
 
-    val products by viewModel.products.observeAsState(initial = emptyList())
+    // Tạo SnackbarHostState để quản lý Snackbar
+    val snackbarHostState = remember { SnackbarHostState() }
+    // Tạo CoroutineScope để gọi showSnackbar
+    val coroutineScope = rememberCoroutineScope()
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(top = 16.dp, start = 16.dp, end = 16.dp, bottom = 0.dp)
-    ) {
-        Text(
-            "Cart",
-            fontSize = 32.sp,
-            fontFamily = wavyFont,
-            fontWeight = FontWeight.Bold,
-            textAlign = TextAlign.Center,
-            color = Color(0xFFFF6600),
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        if (cartItems.isEmpty()) {
+    Scaffold(
+        snackbarHost = {
+            // Tùy chỉnh giao diện của SnackbarHost
+            SnackbarHost(
+                hostState = snackbarHostState,
+                modifier = Modifier.padding(16.dp)
+            ) { data ->
+                // Tùy chỉnh giao diện của Snackbar
+                Snackbar(
+                    modifier = Modifier.padding(8.dp),
+                    shape = RoundedCornerShape(12.dp), // Bo tròn góc
+                    containerColor = Color(0xFF1E9584), // Màu nền xanh đậm
+                    contentColor = Color.White, // Màu chữ trắng
+                    action = {
+                        // Tùy chỉnh nút hành động "OK"
+                        TextButton(
+                            onClick = { data.dismiss() }
+                        ) {
+                            Text(
+                                text = data.visuals.actionLabel ?: "OK",
+                                color = Color.Yellow // Màu vàng cho nút "OK"
+                            )
+                        }
+                    }
+                ) {
+                    // Nội dung của Snackbar với biểu tượng
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Info, // Biểu tượng thông tin
+                            contentDescription = null,
+                            tint = Color.Yellow, // Màu vàng cho biểu tượng
+                            modifier = Modifier.size(20.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = data.visuals.message,
+                            modifier = Modifier.padding(vertical = 8.dp)
+                        )
+                    }
+                }
+            }
+        }
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(
+                    start = 16.dp,
+                    end = 16.dp,
+                    bottom = paddingValues.calculateBottomPadding()
+                )
+        ) {
             Text(
-                "No orders yet!",
-                fontSize = 24.sp,
+                "Cart",
+                fontSize = 32.sp,
+                fontFamily = wavyFont,
+                fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
-                color = Color.Gray,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 24.dp)
+                color = Color(0xFFFF6600),
+                modifier = Modifier.fillMaxWidth()
             )
-        } else {
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(vertical = 1.dp), // ✅ Giúp vuốt mượt hơn
-                verticalArrangement = Arrangement.spacedBy(8.dp) // ✅ Giãn cách giúp mượt hơn
-            ) {
-                items(cartItems, key = {it.productId}) {
-                    item ->
-                    val product = products.find { it.id == item.productId }
-                    CartItemCard(cartItem = item, onDeleteFromCart = { onDeleteFromCart(item) }, onBuy = { product?.let { navController.navigate("productDetail/${it.id}") } })
+
+            if (cartItems.isEmpty()) {
+                Text(
+                    "No orders yet!",
+                    fontSize = 24.sp,
+                    textAlign = TextAlign.Center,
+                    color = Color.Gray,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 24.dp)
+                )
+            } else {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(vertical = 1.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    items(cartItems, key = { it.productId }) { item ->
+                        val product = products.find { it.id == item.productId }
+                        CartItemCard(
+                            cartItem = item,
+                            onDeleteFromCart = {
+                                onDeleteFromCart(item)
+                                coroutineScope.launch {
+                                    snackbarHostState.showSnackbar(
+                                        message = "Successful product deletion",
+                                        actionLabel = "OK",
+                                        duration = SnackbarDuration.Short
+                                    )
+                                }
+                            },
+                            onBuy = { product?.let { navController.navigate("productDetail/${it.id}") } }
+                        )
+                    }
                 }
             }
         }
@@ -119,6 +195,9 @@ fun CartItemCard(
         modifier = Modifier
             .padding(4.dp)
             .height(125.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = Color.White
+        ),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         val wavyFont = FontFamily(Font(R.font.wavy_font))

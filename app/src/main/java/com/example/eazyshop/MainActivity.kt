@@ -208,6 +208,7 @@ fun Greeting(
 
             if (productId != null && product != null) {
                 OrderDetailScreen(
+                    navController = navController,
                     productId = productId,
                     product = product.copy(quantity = quantity), // ✅ Cập nhật số lượng
                     addressViewModel = addressViewModel,

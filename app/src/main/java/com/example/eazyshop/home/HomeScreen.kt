@@ -1,11 +1,13 @@
 package com.example.eazyshop.home
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
@@ -15,6 +17,7 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.Home
@@ -27,10 +30,12 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -95,7 +100,38 @@ fun HomeScreen(
     }
 
     Scaffold(
-        snackbarHost = { SnackbarHost(hostState = snackbarHostState) } // Thêm Snackbar
+        snackbarHost = {
+            // Tùy chỉnh giao diện của SnackbarHost
+            SnackbarHost(
+                hostState = snackbarHostState,
+                modifier = Modifier.padding(8.dp)
+            ) { data ->
+                // Tùy chỉnh giao diện của Snackbar
+                Snackbar(
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                    shape = RoundedCornerShape(8.dp), // Bo tròn góc
+                    containerColor = Color(0xFF1E9584), // Màu nền xanh đậm
+                    contentColor = Color.White, // Màu chữ trắng
+                    action = {
+                        // Tùy chỉnh nút hành động "OK"
+                        TextButton(
+                            onClick = { data.dismiss() }
+                        ) {
+                            Text(
+                                text = data.visuals.actionLabel ?: "OK",
+                                color = Color.Yellow // Màu vàng cho nút "OK"
+                            )
+                        }
+                    }
+                ) {
+                    // Nội dung của Snackbar
+                    Text(
+                        text = data.visuals.message,
+                        modifier = Modifier.padding(vertical = 8.dp)
+                    )
+                }
+            }
+        }
     ) { paddingValues ->
         Column(modifier = Modifier.padding(paddingValues)) {
             val wavyFont = FontFamily(Font(R.font.wavy_font))
@@ -184,9 +220,10 @@ fun EzShopBottomAppBar(
         "Me" to Icons.Default.Person
     )
 
-    NavigationBar(containerColor = Color.Black, modifier = Modifier.height(56.dp)) {
+    NavigationBar(containerColor = Color(0xFFF5F5F5), modifier = Modifier.height(56.dp).border(0.1.dp, color = Color.LightGray)) {
         items.forEachIndexed { index, item ->
             NavigationBarItem(
+                modifier = Modifier.padding(top = 8.dp),
                 selected = selectedIndex == index, // Sử dụng selectedIndex trực tiếp
                 onClick = { onItemSelected(index) },
                 icon = {
@@ -194,16 +231,17 @@ fun EzShopBottomAppBar(
                         imageVector = item.second,
                         contentDescription = item.first,
                         modifier = Modifier.size(24.dp),
-                        tint = if (selectedIndex == index) Color.White else Color.Gray
+                        tint = if (selectedIndex == index) Color(0xFFFF6600) else Color(0xFF8A7BA2)
                     )
                 },
                 label = {
                     Text(
                         item.first,
                         style = TextStyle(
-                            color = if (selectedIndex == index) Color.White else Color.Gray,
+                            color = if (selectedIndex == index) Color(0xFFFF6600) else Color(0xFF8A7BA2),
                             fontSize = 14.sp
-                        )
+                        ),
+                        modifier = Modifier.offset(y = (-8).dp)
                     )
                 },
                 colors = NavigationBarItemDefaults.colors(indicatorColor = Color.Transparent)

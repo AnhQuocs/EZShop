@@ -60,7 +60,7 @@ fun CheckOrderScreen(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(Color(0xFFFF3333))
+                    .background(Color(0xFFFF6600))
                     .constrainAs(orderSuccess) {
                         top.linkTo(parent.top)
                         end.linkTo(parent.end)

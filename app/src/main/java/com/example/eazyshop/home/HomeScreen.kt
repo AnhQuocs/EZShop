@@ -61,6 +61,7 @@ import com.example.eazyshop.order.HistoryScreen
 import com.example.eazyshop.profile.ProfileScreen
 import com.example.eazyshop.viewmodel.CartViewModel
 import com.example.eazyshop.viewmodel.ProductViewModel
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.launch
 
 @Composable
@@ -176,6 +177,12 @@ fun HomeScreen(
 fun MainScreen(navController: NavController, cartViewModel: CartViewModel = hiltViewModel()) {
     val pagerState = rememberPagerState(pageCount = { 4 }) // ✅ Thêm pageCount
     val coroutineScope = rememberCoroutineScope()
+
+    val systemUiController = rememberSystemUiController()
+
+    LaunchedEffect(Unit) {
+        systemUiController.setStatusBarColor(Color(0xFFFF6600))
+    }
 
     Scaffold(
         bottomBar = {

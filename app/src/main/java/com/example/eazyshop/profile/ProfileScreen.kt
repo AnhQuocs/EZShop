@@ -54,7 +54,6 @@ fun ProfileScreen(
     val systemUiController = rememberSystemUiController()
 
     LaunchedEffect(Unit) {
-        systemUiController.setStatusBarColor(Color(0xFFFF6600))
         userViewModel.getUser(id = 1)
     }
 

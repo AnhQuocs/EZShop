@@ -223,7 +223,7 @@ fun EzShopBottomAppBar(
         "Home" to Icons.Default.Home,
         "Cart" to Icons.Outlined.ShoppingCart,
         "History" to Icons.Filled.AccessTime,
-        "Me" to Icons.Default.Person
+        "Profile" to Icons.Default.Person
     )
 
     NavigationBar(containerColor = Color(0xFFF5F5F5), modifier = Modifier.height(56.dp).border(0.1.dp, color = Color.LightGray)) {

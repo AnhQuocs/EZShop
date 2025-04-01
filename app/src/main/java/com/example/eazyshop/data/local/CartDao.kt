@@ -7,8 +7,6 @@ import androidx.room.Query
 import com.example.eazyshop.data.model.CartItem
 import kotlinx.coroutines.flow.Flow
 
-// (Tạo DAO để quản lý giỏ hàng)
-
 @Dao
 interface CartDao {
     @Query("SELECT * FROM cart_items")

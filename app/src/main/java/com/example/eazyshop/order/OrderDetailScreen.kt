@@ -870,4 +870,3 @@ private fun OrderInfoCardPreview() {
         )
     }
 }
-

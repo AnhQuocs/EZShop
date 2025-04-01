@@ -124,6 +124,8 @@ fun HistoryScreen(
                 modifier = Modifier.fillMaxWidth()
             )
 
+            Spacer(Modifier.height(8.dp))
+
             if (orderHistoryItems.isEmpty()) {
                 Text(
                     "No orders yet!",
@@ -184,17 +186,17 @@ fun HistoryItemCard(
 ) {
 
     val thrifty =
-        BigDecimal(product.price * 0.05 * product.quantity).setScale(2, RoundingMode.HALF_UP).toDouble()
-    val grandPrice = BigDecimal(product.price * product.quantity - thrifty).setScale(2, RoundingMode.HALF_UP)
+        BigDecimal(orderHistory.price * 0.05 * orderHistory.quantity).setScale(2, RoundingMode.HALF_UP).toDouble()
+    val grandPrice = BigDecimal(orderHistory.price * orderHistory.quantity - thrifty).setScale(2, RoundingMode.HALF_UP)
         .toDouble()
-    val originalPrice = BigDecimal(product.price * 0.05 + product.price).setScale(2, RoundingMode.HALF_UP)
+    val originalPrice = BigDecimal(orderHistory.price * 0.05 + orderHistory.price).setScale(2, RoundingMode.HALF_UP)
         .toDouble()
 
     Card(
         shape = RoundedCornerShape(16.dp),
         modifier = Modifier
             .fillMaxWidth()
-            .height(210.dp)
+            .height(200.dp)
             .clip(RoundedCornerShape(16.dp))
             .border(1.dp, Color.LightGray, RoundedCornerShape(16.dp))
             .animateContentSize(),

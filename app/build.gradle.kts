@@ -69,6 +69,8 @@ dependencies {
 
     implementation ("androidx.compose.material:material-icons-extended:1.6.1")
 
+    implementation ("com.google.accompanist:accompanist-systemuicontroller:0.32.0")
+
 //    implementation("com.bef.effectsdkk:effectsdkk:1.0.0")
 
     // Room Database

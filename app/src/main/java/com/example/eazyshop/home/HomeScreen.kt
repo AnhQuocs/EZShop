@@ -55,11 +55,10 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.eazyshop.R
-import com.example.eazyshop.data.model.CartItem
 import com.example.eazyshop.item.ProductCardHome
 import com.example.eazyshop.order.CartScreen
 import com.example.eazyshop.order.HistoryScreen
-import com.example.eazyshop.profile.MeScreen
+import com.example.eazyshop.profile.ProfileScreen
 import com.example.eazyshop.viewmodel.CartViewModel
 import com.example.eazyshop.viewmodel.ProductViewModel
 import kotlinx.coroutines.launch
@@ -174,7 +173,7 @@ fun HomeScreen(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun MainScreen(navController: NavController, cartViewModel: CartViewModel = hiltViewModel(), onViewDetail: () -> Unit) {
+fun MainScreen(navController: NavController, cartViewModel: CartViewModel = hiltViewModel()) {
     val pagerState = rememberPagerState(pageCount = { 4 }) // ✅ Thêm pageCount
     val coroutineScope = rememberCoroutineScope()
 
@@ -202,7 +201,7 @@ fun MainScreen(navController: NavController, cartViewModel: CartViewModel = hilt
                     onDeleteFromCart = { cartItem -> cartViewModel.removeFromCart(cartItem) }
                 )
                 2 -> HistoryScreen(navController = navController)
-                3 -> MeScreen()
+                3 -> ProfileScreen()
             }
         }
     }

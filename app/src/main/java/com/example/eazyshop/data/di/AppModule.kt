@@ -6,11 +6,14 @@ import com.example.eazyshop.data.local.AppDatabase
 import com.example.eazyshop.data.local.CartDao
 import com.example.eazyshop.data.local.OrderHistoryDao
 import com.example.eazyshop.data.local.ProductDao
+import com.example.eazyshop.data.local.UserDao
+import com.example.eazyshop.data.model.User
 import com.example.eazyshop.data.remote.ProductApi
 import com.example.eazyshop.data.repository.AddressRepository
 import com.example.eazyshop.data.repository.CartRepository
 import com.example.eazyshop.data.repository.OrderHistoryRepository
 import com.example.eazyshop.data.repository.ProductRepository
+import com.example.eazyshop.data.repository.UserRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -57,6 +60,9 @@ object AppModule {
     fun provideOrderHistoryDao(database: AppDatabase): OrderHistoryDao = database.orderHistoryDao()
 
     @Provides
+    fun provideUserDao(database: AppDatabase): UserDao = database.userDao()
+
+    @Provides
     @Singleton
     fun provideProductRepository(productDao: ProductDao, productApi: ProductApi): ProductRepository =
         ProductRepository(productDao, productApi)
@@ -76,4 +82,8 @@ object AppModule {
     fun provideOrderHistoryRepository(orderHistoryDao: OrderHistoryDao): OrderHistoryRepository {
         return OrderHistoryRepository(orderHistoryDao)
     }
+
+    @Provides
+    @Singleton
+    fun provideUserRepository(userDao: UserDao): UserRepository = UserRepository(userDao)
 }

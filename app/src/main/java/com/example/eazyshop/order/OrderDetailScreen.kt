@@ -642,7 +642,7 @@ fun OrderCodeCard(
                 val context = LocalContext.current
                 val clipboardManager = context.getSystemService(ClipboardManager::class.java)
 
-                val orderText = orderHistory.createdAt.format(DateTimeFormatter.ofPattern("yyyyMMdd")) + "SP"
+                val orderText = orderHistory.createdAt.format(DateTimeFormatter.ofPattern("yyyyMMddHHmm")) + "SP"
 
                 Row {
                     Text(

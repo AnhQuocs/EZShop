@@ -108,8 +108,7 @@ fun Greeting(
 
             MainScreen(
                 navController,
-                cartViewModel = cartViewModel,
-                onViewDetail = {}
+                cartViewModel = cartViewModel
             )
         }
 

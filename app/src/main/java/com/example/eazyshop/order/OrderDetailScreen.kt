@@ -816,6 +816,10 @@ private fun OrderCodeCardPreview() {
         OrderCodeCard(
             orderHistory = OrderHistory(
                 productId = 1,
+                title = "Laptop",
+                description = "Laptop Gamming",
+                price = 1999.99f,
+                quantity = 1,
                 addressId = "2",
                 createdAt = LocalDateTime.now()
             )
@@ -856,7 +860,11 @@ private fun OrderInfoCardPreview() {
             ),
             orderHistory = OrderHistory(
                 productId = 1,
-                addressId = "",
+                title = "Laptop",
+                description = "Laptop Gamming",
+                price = 1999.99f,
+                quantity = 1,
+                addressId = "2",
                 createdAt = LocalDateTime.now()
             )
         )

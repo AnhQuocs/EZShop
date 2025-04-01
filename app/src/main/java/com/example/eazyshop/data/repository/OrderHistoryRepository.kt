@@ -5,6 +5,9 @@ import com.example.eazyshop.data.model.OrderHistory
 import kotlinx.coroutines.flow.Flow
 
 class OrderHistoryRepository(private val orderHistoryDao: OrderHistoryDao) {
+
+    val historyItems: Flow<List<OrderHistory>> = orderHistoryDao.getAllOrders()
+
     fun getOrdersBYProductId(productId: Int): Flow<List<OrderHistory>> =
         orderHistoryDao.getOrdersByProductId(productId)
 

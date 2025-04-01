@@ -17,4 +17,7 @@ interface OrderHistoryDao {
 
     @Query("SELECT * FROM order_history WHERE id = :orderId LIMIT 1")
     suspend fun getOrderById(orderId: String): OrderHistory?
+
+    @Query("SELECT * FROM order_history")
+    fun getAllOrders(): Flow<List<OrderHistory>>
 }

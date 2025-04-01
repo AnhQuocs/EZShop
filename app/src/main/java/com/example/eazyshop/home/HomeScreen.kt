@@ -174,7 +174,7 @@ fun HomeScreen(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun MainScreen(navController: NavController, cartViewModel: CartViewModel = hiltViewModel(), cartItems: List<CartItem>) {
+fun MainScreen(navController: NavController, cartViewModel: CartViewModel = hiltViewModel(), onViewDetail: () -> Unit) {
     val pagerState = rememberPagerState(pageCount = { 4 }) // ✅ Thêm pageCount
     val coroutineScope = rememberCoroutineScope()
 
@@ -201,7 +201,7 @@ fun MainScreen(navController: NavController, cartViewModel: CartViewModel = hilt
                     navController = navController,
                     onDeleteFromCart = { cartItem -> cartViewModel.removeFromCart(cartItem) }
                 )
-                2 -> HistoryScreen()
+                2 -> HistoryScreen(navController = navController)
                 3 -> MeScreen()
             }
         }

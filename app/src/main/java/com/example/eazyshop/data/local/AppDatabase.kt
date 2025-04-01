@@ -18,7 +18,7 @@ import kotlinx.coroutines.launch
 
 // (Database chính của ứng dụng)
 
-@Database(entities = [Product::class, CartItem::class, Address::class, OrderHistory::class], version = 16, exportSchema = false)
+@Database(entities = [Product::class, CartItem::class, Address::class, OrderHistory::class], version = 17, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun productDao(): ProductDao

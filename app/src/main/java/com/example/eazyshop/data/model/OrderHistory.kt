@@ -21,6 +21,10 @@ import java.util.UUID
 data class OrderHistory(
     @PrimaryKey val id: String = UUID.randomUUID().toString(),
     val productId: Int,
-    val addressId: String, // Giờ đã trỏ đến orderId của Address
+    val title: String,
+    val description: String,
+    val price: Float,
+    val quantity: Int,
+    val addressId: String,      // Giờ đã trỏ đến orderId của Address
     val createdAt: LocalDateTime = LocalDateTime.now()
 )

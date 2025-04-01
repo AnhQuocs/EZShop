@@ -1,6 +1,7 @@
 package com.example.eazyshop.viewmodel
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.eazyshop.data.model.OrderHistory
 import com.example.eazyshop.data.repository.OrderHistoryRepository
@@ -11,15 +12,17 @@ import javax.inject.Inject
 
 @HiltViewModel
 class OrderHistoryViewModel @Inject constructor(
-    private val repository: OrderHistoryRepository
+    private val historyRepository: OrderHistoryRepository
 ) : ViewModel() {
 
+    val orderHistories = historyRepository.historyItems.asLiveData()
+
     fun getOrdersByProductId(productId: Int): Flow<List<OrderHistory>> =
-        repository.getOrdersBYProductId(productId)
+        historyRepository.getOrdersBYProductId(productId)
 
     fun insertOrder(orderHistory: OrderHistory) {
         viewModelScope.launch {
-            repository.insertOrder(orderHistory)
+            historyRepository.insertOrder(orderHistory)
         }
     }
 }

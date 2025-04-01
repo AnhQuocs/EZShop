@@ -1,7 +1,6 @@
 package com.example.eazyshop
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -22,7 +21,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -37,7 +35,6 @@ import com.example.eazyshop.data.model.Address
 import com.example.eazyshop.data.model.OrderHistory
 import com.example.eazyshop.home.HomeScreen
 import com.example.eazyshop.home.MainScreen
-import com.example.eazyshop.order.CartScreen
 import com.example.eazyshop.order.OrderDetailScreen
 import com.example.eazyshop.order.OrderScreen
 import com.example.eazyshop.order.ProductDetailScreen
@@ -77,7 +74,6 @@ fun Greeting(
 ) {
     val navController = rememberNavController()
     val products by viewModel.products.observeAsState(initial = emptyList())
-    val cartItems by cartViewModel.cartItems.observeAsState(initial = emptyList())
 
     NavHost(
         navController = navController,
@@ -109,7 +105,12 @@ fun Greeting(
         }
     ) {
         composable("home") {
-            MainScreen(navController, cartViewModel = cartViewModel, cartItems = cartItems)
+
+            MainScreen(
+                navController,
+                cartViewModel = cartViewModel,
+                onViewDetail = {}
+            )
         }
 
         composable(
@@ -190,7 +191,11 @@ fun Greeting(
 
                             val orderHistory = OrderHistory(
                                 productId = product.id,
-                                addressId = address.orderId
+                                title = product.title,
+                                description = product.description,
+                                price = product.price.toFloat(),
+                                quantity = quantity,
+                                addressId = address.orderId // Liên kết với addressId
                             )
                             orderHistoryViewModel.insertOrder(orderHistory)
 

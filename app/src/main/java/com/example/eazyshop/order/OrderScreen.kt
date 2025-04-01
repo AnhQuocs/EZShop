@@ -55,12 +55,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.eazyshop.R
 import com.example.eazyshop.data.model.Product
 import com.example.eazyshop.ui.theme.EazyShopTheme
+import com.example.eazyshop.viewmodel.OrderHistoryViewModel
 import java.math.BigDecimal
 import java.math.RoundingMode
 

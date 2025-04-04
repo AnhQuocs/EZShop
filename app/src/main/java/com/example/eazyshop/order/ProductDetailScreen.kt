@@ -258,7 +258,6 @@ fun ProductDetailScreen(
                     }
                 }
 
-
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()

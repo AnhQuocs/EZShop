@@ -8,7 +8,6 @@ EazyShop là một ứng dụng mua sắm đơn giản được phát triển b�
 - 🔍 Xem chi tiết sản phẩm
 - ➕ Thêm sản phẩm vào giỏ hàng
 - 🛍️ Mua hàng trực tiếp từ trang chính
-- 🧾 Quản lý sản phẩm (nếu có: thêm/sửa/xoá)
 - 🎨 UI hiện đại sử dụng Jetpack Compose + Material 3
 
 ## 🧱 Công nghệ sử dụng

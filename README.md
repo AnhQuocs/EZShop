@@ -30,7 +30,7 @@ Một số màn hình chính trong ứng dụng:
 |------------|-------------------|----------|
 | ![](./image/home_screen.jpg) | ![](./image/productdetail_screen.jpg) | ![](./image/cart_screen.jpg) |
 
-| Lịch sử đơn hàng | Danh sách đơn hàng | Chi tiết đơn |
+| Lịch sử đơn hàng | Đặt hàng | Chi tiết đơn |
 |------------------|---------------------|----------------|
 | ![](./image/history_screen.jpg) | ![](./image/order_screen.jpg) | ![](./image/order_view_detail.jpg) |
 
@@ -42,4 +42,4 @@ Một số màn hình chính trong ứng dụng:
 ## 📦 Cài đặt & Chạy dự án
 
 ```bash
-git clone https://github.com/your-username/eazyshop.git
+git clone https://github.com/AnhQuocs/EZShop.git

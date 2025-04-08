@@ -27,13 +27,17 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBalanceWallet
 import androidx.compose.material.icons.filled.AttachMoney
 import androidx.compose.material.icons.filled.Attribution
+import androidx.compose.material.icons.filled.CardGiftcard
 import androidx.compose.material.icons.filled.ConfirmationNumber
 import androidx.compose.material.icons.filled.DoubleArrow
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Forum
 import androidx.compose.material.icons.filled.HealthAndSafety
+import androidx.compose.material.icons.filled.LineAxis
+import androidx.compose.material.icons.filled.ShoppingBag
 import androidx.compose.material.icons.filled.Support
 import androidx.compose.material.icons.filled.SupportAgent
+import androidx.compose.material.icons.filled.Tv
 import androidx.compose.material.icons.filled.Wallet
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -237,7 +241,7 @@ fun FestivalCard() {
                 .padding(16.dp, 8.dp)
         ) {
             Text(
-                "4.4 Super Sale Festival",
+                "Super Sale Festival",
                 fontSize = 14.sp
             )
             
@@ -493,9 +497,41 @@ fun OtherUtilitiesCard() {
                         modifier = Modifier
                             .weight(1f)
                             .border(0.2.dp, color = Color.Black, RoundedCornerShape(8.dp)),
-                        icon = Icons.Default.Attribution,
-                        title = "Loyalty Program",
-                        subTitle = "Diamond Member"
+                        icon = Icons.Default.ShoppingBag,
+                        title = "Acquisition",
+                        subTitle = "Acquisition"
+                    )
+
+                }
+            }
+
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color.White)
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 8.dp),
+                    horizontalArrangement = Arrangement.SpaceAround
+                ) {
+                    OtherUtilitiesItem(
+                        modifier = Modifier
+                            .weight(1f)
+                            .border(0.2.dp, color = Color.Black, RoundedCornerShape(8.dp)),
+                        icon = Icons.Default.Tv,
+                        title = "Creator Channel",
+                        subTitle = "Creator"
+                    )
+                    Spacer(Modifier.width(8.dp))
+                    OtherUtilitiesItem(
+                        modifier = Modifier
+                            .weight(1f)
+                            .border(0.2.dp, color = Color.Black, RoundedCornerShape(8.dp)),
+                        icon = Icons.Default.Wallet,
+                        title = "Shopoo account balance",
+                        subTitle = ""
                     )
 
                 }
@@ -516,50 +552,18 @@ fun OtherUtilitiesCard() {
                         modifier = Modifier
                             .weight(1f)
                             .border(0.2.dp, color = Color.Black, RoundedCornerShape(8.dp)),
-                        icon = Icons.Default.Attribution,
-                        title = "Loyalty Program",
-                        subTitle = "Diamond Member"
+                        icon = Icons.Default.CardGiftcard,
+                        title = "Bounty hunt",
+                        subTitle = "Coin hunt game"
                     )
                     Spacer(Modifier.width(8.dp))
                     OtherUtilitiesItem(
                         modifier = Modifier
                             .weight(1f)
                             .border(0.2.dp, color = Color.Black, RoundedCornerShape(8.dp)),
-                        icon = Icons.Default.Attribution,
-                        title = "Loyalty Program",
-                        subTitle = "Diamond Member"
-                    )
-
-                }
-            }
-
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(Color.White)
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp),
-                    horizontalArrangement = Arrangement.SpaceAround
-                ) {
-                    OtherUtilitiesItem(
-                        modifier = Modifier
-                            .weight(1f)
-                            .border(0.2.dp, color = Color.Black, RoundedCornerShape(8.dp)),
-                        icon = Icons.Default.Attribution,
-                        title = "Loyalty Program",
-                        subTitle = "Diamond Member"
-                    )
-                    Spacer(Modifier.width(8.dp))
-                    OtherUtilitiesItem(
-                        modifier = Modifier
-                            .weight(1f)
-                            .border(0.2.dp, color = Color.Black, RoundedCornerShape(8.dp)),
-                        icon = Icons.Default.Attribution,
-                        title = "Loyalty Program",
-                        subTitle = "Diamond Member"
+                        icon = Icons.Default.LineAxis,
+                        title = "Shopoo Affiliate Marketing",
+                        subTitle = ""
                     )
 
                 }
